@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "683075637350",
+    "project_id": "crysalisreader",
+    "storage_bucket": "crysalisreader.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:683075637350:android:a9cc7c23c75566eaf89da7",
+        "android_client_info": {
+          "package_name": "com.clementcorporation.crysalisreader"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "683075637350-4q0oq23e5jdjuajlmtpbnptiincu54k4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC0P2TYHbrK4lXg4lfxyqhxCjlgmYVWyvk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "683075637350-4q0oq23e5jdjuajlmtpbnptiincu54k4.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
