@@ -6,8 +6,12 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -16,6 +20,8 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.clementcorporation.crysalisreader.R
@@ -66,18 +72,32 @@ fun PasswordInput(
     passwordState: MutableState<String>,
     labelId: String = "Password",
     enabled: Boolean = true,
+    passwordVisibility: MutableState<Boolean>,
     imeAction: ImeAction = ImeAction.Done,
     onAction: KeyboardActions = KeyboardActions.Default,
 ) {
+    val visualTransformation = if (passwordVisibility.value) VisualTransformation.None else PasswordVisualTransformation()
     InputField(
         modifier = modifier,
         valueState = passwordState,
         labelId = labelId,
         enabled = enabled,
         imeAction = imeAction,
-        keyboardType = KeyboardType.Email,
+        visualTransformation = visualTransformation,
+        keyboardType = KeyboardType.Password,
+        passwordVisibility = passwordVisibility,
         onAction = onAction
     )
+}
+
+@Composable
+fun PasswordVisibility(passwordVisibility: MutableState<Boolean>) {
+    val visible = passwordVisibility.value
+    IconButton(onClick = {
+        passwordVisibility.value = !visible
+    }) {
+        Icons.Default.Close
+    }
 }
 
 @Composable
@@ -89,7 +109,11 @@ fun InputField(
     isSingleLine: Boolean = true,
     keyboardType: KeyboardType = KeyboardType.Text,
     imeAction: ImeAction = ImeAction.Next,
-    onAction: KeyboardActions = KeyboardActions.Default
+    visualTransformation: VisualTransformation = VisualTransformation.None,
+    passwordVisibility: MutableState<Boolean> = remember{
+        mutableStateOf(false)
+    },
+    onAction: KeyboardActions = KeyboardActions.Default,
 ) {
     OutlinedTextField(
         value = valueState.value,
@@ -111,7 +135,36 @@ fun InputField(
             .padding(start = 10.dp, end = 10.dp, bottom = 10.dp)
             .fillMaxWidth(),
         enabled = enabled,
+        visualTransformation = visualTransformation,
+        trailingIcon = {
+            PasswordVisibility(passwordVisibility)
+        },
         keyboardOptions = KeyboardOptions(keyboardType = keyboardType, imeAction = imeAction),
         keyboardActions = onAction
     )
+}
+
+@Composable
+fun SubmitButton(
+    textId: String = "",
+    loading: Boolean = false,
+    validInputs: Boolean = false,
+    onClick: () -> Unit = {}
+) {
+    Button(
+        modifier = Modifier
+            .padding(8.dp)
+            .fillMaxWidth(),
+        colors = ButtonDefaults.buttonColors(
+            backgroundColor = Color.Blue,
+            disabledBackgroundColor = Color.Gray,
+            contentColor = Color.White
+        ),
+        enabled = !loading && validInputs,
+        shape = CircleShape,
+        onClick = onClick
+    ) {
+        if (loading) CircularProgressIndicator(modifier = Modifier.size(25.dp), color = Color.White)
+        else Text(text = textId, modifier = Modifier.padding(5.dp))
+    }
 }
