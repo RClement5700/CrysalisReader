@@ -6,7 +6,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -20,19 +19,20 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import com.clementcorporation.crysalisreader.R
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.clementcorporation.crysalisreader.R
 import com.clementcorporation.crysalisreader.components.EmailInput
 import com.clementcorporation.crysalisreader.components.PasswordInput
 import com.clementcorporation.crysalisreader.components.ReaderLogo
 import com.clementcorporation.crysalisreader.components.SubmitButton
+import com.clementcorporation.crysalisreader.navigation.ReaderScreens
 
 @Composable
-fun ReaderLoginScreen(navController: NavController) {
+fun ReaderLoginScreen(navController: NavController, viewModel: LoginScreenViewModel = androidx.lifecycle.viewmodel.compose.viewModel()) {
     val showLoginForm = rememberSaveable {
         mutableStateOf(true)
     }
@@ -47,10 +47,16 @@ fun ReaderLoginScreen(navController: NavController) {
             if (showLoginForm.value) {
                 UserForm {email, password ->
                     //TODO: FB login
+                    viewModel.signInWithEmailAndPassword(email, password) {
+                        navController.navigate(ReaderScreens.HomeScreen.name)
+                    }
                 }
             } else {
                 UserForm(loading = false, isCreateAccount = true) { email, password ->
                     //TODO: create FB account
+                    viewModel.createUserWithEmailAndPassword(navController.context, email, password) {
+                        navController.navigate(ReaderScreens.HomeScreen.name)
+                    }
                 }
             }
             Spacer(modifier = Modifier.height(10.dp))
