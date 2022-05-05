@@ -7,6 +7,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.clementcorporation.crysalisreader.model.ReaderUser
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -25,8 +26,14 @@ class LoginScreenViewModel: ViewModel(){
                 auth.createUserWithEmailAndPassword(email, password)
                     .addOnCompleteListener{task ->
                         if (task.isSuccessful) {
-                            val displayName = task.result?.user?.email?.split("@")?.first()
-                            home()
+                            try {
+                                val displayName = task.result?.user?.email?.split("@")?.first()
+                                createUser(displayName)
+                                home()
+                            } catch(e: Exception) {
+                                Toast.makeText(context, "Cannot Create User", Toast.LENGTH_SHORT).show()
+                            }
+
                         } else {
                             Log.d("Create User: ", task.result.toString())
                         }
@@ -53,12 +60,16 @@ class LoginScreenViewModel: ViewModel(){
         }
     }
 
-    fun createUser(displayName: String?) {
+    private fun createUser(displayName: String?) {
         val userId = auth.currentUser?.uid
-        val user = mutableMapOf<String, Any>()
-        user["userId"] = userId.toString()
-        user["displayName"] = displayName!!
-        FirebaseFirestore.getInstance().collection("users")
-            .add(user)
+        val readerUser = ReaderUser(
+            id = null,
+            userId = userId.toString(),
+            displayName = displayName!!,
+            avatarUrl = "",
+            quote = "YOLO",
+            profession = "Android Dev"
+        ).toMap()
+        FirebaseFirestore.getInstance().collection("users").add(readerUser)
     }
 }
